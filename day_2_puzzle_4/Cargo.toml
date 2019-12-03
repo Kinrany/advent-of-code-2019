@@ -9,5 +9,5 @@ edition = "2018"
 [dependencies]
 anyhow = "1.0.25"
 day_2_puzzle_3 = { path = "../day_2_puzzle_3" }
-day_1_puzzle_1 = { path = "../day_1_puzzle_1" }
 itertools = "0.8.2"
+shared = { path = "../shared" }

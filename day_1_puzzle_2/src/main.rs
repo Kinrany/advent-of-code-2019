@@ -2,23 +2,16 @@ mod fuel_for_module;
 mod fuel_for_modules;
 
 use anyhow::Result;
-use day_1_puzzle_1::{get_filepath, parse_input};
+use day_1_puzzle_1::parse_input;
 use fuel_for_modules::fuel_for_modules;
+use shared::run;
 
-fn day_1_puzzle_2() -> Result<i64> {
-  let filepath = get_filepath()?;
-  let input_string = std::fs::read_to_string(&filepath)?;
+fn day_1_puzzle_2(input_string: String) -> Result<i64> {
   let input = parse_input(&input_string)?;
   let additional_fuel = fuel_for_modules(input);
   Ok(additional_fuel)
 }
 
 fn main() {
-  match day_1_puzzle_2() {
-    Ok(result) => println!("Answer: {:?}", result),
-    Err(error) => {
-      eprintln!("Error: {:?}", error);
-      std::process::exit(1);
-    }
-  }
+  run(day_1_puzzle_2);
 }
