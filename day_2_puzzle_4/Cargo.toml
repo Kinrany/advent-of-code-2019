@@ -1,0 +1,13 @@
+[package]
+name = "day_2_puzzle_4"
+version = "0.1.0"
+authors = ["Kinrany <kinrany@yandex.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.25"
+day_2_puzzle_3 = { path = "../day_2_puzzle_3" }
+day_1_puzzle_1 = { path = "../day_1_puzzle_1" }
+itertools = "0.8.2"

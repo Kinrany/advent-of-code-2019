@@ -1,14 +1,14 @@
 mod parse_input;
+mod program;
 mod restore_program;
 mod run_program;
 
 use anyhow::Result;
 use day_1_puzzle_1::get_filepath;
 use parse_input::parse_input;
+use program::Program;
 use restore_program::restore_program;
 use run_program::run_program;
-
-pub type Program = Vec<usize>;
 
 fn day_2_puzzle_3() -> Result<usize> {
   let filepath = get_filepath()?;
