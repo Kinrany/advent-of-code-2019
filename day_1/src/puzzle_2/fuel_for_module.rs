@@ -1,4 +1,4 @@
-use day_1_puzzle_1::fuel_for_module as naive_fuel_for_mass;
+use crate::puzzle_1::fuel_for_module as naive_fuel_for_mass;
 
 /// A quote from problem statement:
 /// > Fuel itself requires fuel just like a module - take its mass,
