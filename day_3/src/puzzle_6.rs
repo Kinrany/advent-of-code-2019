@@ -1,9 +1,8 @@
-use anyhow::Result;
-use day_3_puzzle_5::{
-  intersections, parse_input,
-  wires::{Wire, WireSegment},
+use super::{
+  intersections,
+  wires::{Wire, WireSegment, Wires},
 };
-use shared::run;
+use anyhow::Result;
 
 fn is_between(a: i64, x: i64, b: i64) -> bool {
   (a <= x && x <= b) || (b <= x && x <= a)
@@ -35,8 +34,7 @@ fn dist(wire: &Wire, (target_x, target_y): (i64, i64)) -> u64 {
   total_dist
 }
 
-fn day_3_puzzle_6(input_string: String) -> Result<u64> {
-  let (wire1, wire2) = parse_input(&input_string)?;
+pub fn puzzle_6((wire1, wire2): Wires) -> Result<u64> {
   let intersections = intersections(&wire1, &wire2);
   let closest_intersection = intersections
     .into_iter()
@@ -44,8 +42,4 @@ fn day_3_puzzle_6(input_string: String) -> Result<u64> {
     .min()
     .unwrap();
   Ok(closest_intersection)
-}
-
-fn main() {
-  run(day_3_puzzle_6);
 }

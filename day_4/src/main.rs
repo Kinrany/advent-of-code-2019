@@ -1,39 +1,38 @@
 mod validation;
 
 use anyhow::{anyhow, Result};
-use shared::{get_first_arg, print};
+use shared::{input, print};
 use std::iter::Iterator;
 use validation::{has_double_digit, has_exactly_double_digit, is_non_decreasing};
+
+fn count_valid_passwords(is_valid: fn(&u32) -> bool) -> Result<u32> {
+  Ok((MIN..=MAX).filter(is_valid).count() as u32)
+}
+
+fn puzzle_7() -> Result<u32> {
+  count_valid_passwords(|password| has_double_digit(password) && is_non_decreasing(password))
+}
+
+fn puzzle_8() -> Result<u32> {
+  count_valid_passwords(|password| {
+    has_exactly_double_digit(password) && is_non_decreasing(password)
+  })
+}
 
 const MIN: u32 = 382345;
 const MAX: u32 = 843167;
 
-fn is_valid_7(password: &u32) -> bool {
-  has_double_digit(password) && is_non_decreasing(password)
-}
-
-fn is_valid_8(password: &u32) -> bool {
-  has_exactly_double_digit(password) && is_non_decreasing(password)
-}
-
-fn day_4(puzzle_number: u32) -> Result<u32> {
-  let is_valid = match puzzle_number {
-    7 => is_valid_7,
-    8 => is_valid_8,
-    x => {
-      return Err(anyhow!(
-        "Expected puzzle number to be 7 or 8. Found {:?}.",
-        x
-      ))
-    }
-  };
-  let count = (MIN..=MAX).filter(is_valid).count() as u32;
-  Ok(count)
+fn day_4(puzzle_number: usize) -> Result<u32> {
+  match puzzle_number {
+    7 => puzzle_7(),
+    8 => puzzle_8(),
+    x => Err(anyhow!("Puzzle number must be 7 or 8, not {:?}.", x)),
+  }
 }
 
 fn main() {
   print((|| {
-    let puzzle_number = get_first_arg()?.parse::<u32>()?;
+    let puzzle_number = input::puzzle_number()?;
     day_4(puzzle_number)
   })());
 }

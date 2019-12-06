@@ -1,5 +1,5 @@
 [package]
-name = "day_3_puzzle_6"
+name = "day_3"
 version = "0.1.0"
 authors = ["Kinrany <kinrany@yandex.com>"]
 edition = "2018"
@@ -9,4 +9,4 @@ edition = "2018"
 [dependencies]
 shared = { path = "../shared" }
 anyhow = "1.0.25"
-day_3_puzzle_5 = { path = "../day_3_puzzle_5" }
+itertools = "0.8.2"
