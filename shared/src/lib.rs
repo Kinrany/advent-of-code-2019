@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use std::{env::args, fmt::Debug, fs::read_to_string};
 
-fn get_filepath() -> Result<String> {
+pub fn get_first_arg() -> Result<String> {
   args()
     .skip(1)
     .next()
@@ -13,7 +13,7 @@ where
   T1: Fn(String) -> Result<T2>,
   T2: Debug,
 {
-  let filepath = get_filepath()?;
+  let filepath = get_first_arg()?;
   let input = read_to_string(&filepath)?;
   solution(input)
 }
