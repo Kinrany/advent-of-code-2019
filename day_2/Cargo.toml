@@ -1,5 +1,5 @@
 [package]
-name = "day_2_puzzle_3"
+name = "day_2"
 version = "0.1.0"
 authors = ["Kinrany <kinrany@yandex.com>"]
 edition = "2018"
@@ -7,6 +7,6 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+shared = { path = "../shared" }
 anyhow = "1.0.25"
 itertools = "0.8.2"
-shared = { path = "../shared" }

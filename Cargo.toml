@@ -4,8 +4,7 @@ members = [
   "shared",
   "day_1_puzzle_1",
   "day_1_puzzle_2",
-  "day_2_puzzle_3",
-  "day_2_puzzle_4",
+  "day_2",
   "day_3",
   "day_4",
 ]

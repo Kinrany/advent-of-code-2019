@@ -4,14 +4,13 @@ mod puzzle_5;
 mod puzzle_6;
 mod wires;
 
-pub use intersections::intersections;
+use anyhow::{anyhow, Result};
+use intersections::intersections;
 use parse_input::parse_input;
 use puzzle_5::puzzle_5;
 use puzzle_6::puzzle_6;
-use wires::Wires;
-
-use anyhow::{anyhow, Result};
 use shared::{input, print};
+use wires::Wires;
 
 fn day_3(puzzle_number: usize, input: Wires) -> Result<u64> {
   match puzzle_number {
