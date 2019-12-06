@@ -1,7 +1,7 @@
 use super::Program;
 use itertools::Itertools;
 
-pub fn run_program(program: &mut Program) {
+pub fn run(program: &mut Program) {
   let mut ptr = 0;
   loop {
     match program[ptr] {
@@ -30,7 +30,7 @@ pub fn run_program(program: &mut Program) {
 
 #[cfg(test)]
 mod tests {
-  use super::run_program;
+  use super::run;
 
   #[test]
   fn example_0() {
@@ -38,7 +38,7 @@ mod tests {
     let expected_output = vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50];
 
     let mut output = input;
-    run_program(&mut output);
+    run(&mut output);
 
     assert_eq!(output, expected_output);
   }
@@ -49,7 +49,7 @@ mod tests {
     let expected_output = vec![2, 0, 0, 0, 99];
 
     let mut output = input;
-    run_program(&mut output);
+    run(&mut output);
 
     assert_eq!(output, expected_output);
   }
@@ -60,7 +60,7 @@ mod tests {
     let expected_output = vec![2, 3, 0, 6, 99];
 
     let mut output = input;
-    run_program(&mut output);
+    run(&mut output);
 
     assert_eq!(output, expected_output);
   }
@@ -71,7 +71,7 @@ mod tests {
     let expected_output = vec![2, 4, 4, 5, 99, 9801];
 
     let mut output = input;
-    run_program(&mut output);
+    run(&mut output);
 
     assert_eq!(output, expected_output);
   }
@@ -82,7 +82,7 @@ mod tests {
     let expected_output = vec![30, 1, 1, 4, 2, 5, 6, 0, 99];
 
     let mut output = input;
-    run_program(&mut output);
+    run(&mut output);
 
     assert_eq!(output, expected_output);
   }

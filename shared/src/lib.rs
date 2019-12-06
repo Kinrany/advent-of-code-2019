@@ -1,3 +1,5 @@
+pub mod intcode;
+
 use anyhow::{anyhow, Result};
 use std::{env::args, fmt::Debug, fs::read_to_string};
 

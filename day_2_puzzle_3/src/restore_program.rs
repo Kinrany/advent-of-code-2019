@@ -1,4 +1,4 @@
-use super::Program;
+use shared::intcode::Program;
 
 /// A quote from problem statement:
 /// > Once you have a working computer, the first step is to restore

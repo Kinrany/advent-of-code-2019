@@ -1,6 +1,6 @@
 use super::Program;
 
-pub fn parse_input(input: &str) -> anyhow::Result<Program> {
+pub fn parse(input: &str) -> anyhow::Result<Program> {
   input
     .trim()
     .split(',')
