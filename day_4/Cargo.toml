@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 shared = { path = "../shared" }
 anyhow = "1.0.25"
+itertools = "0.8.2"
