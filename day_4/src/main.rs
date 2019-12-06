@@ -16,8 +16,7 @@ fn is_valid_8(password: &u32) -> bool {
   has_exactly_double_digit(password) && is_non_decreasing(password)
 }
 
-fn day_4(min: u32, max: u32) -> Result<u32> {
-  let puzzle_number = get_first_arg()?.parse::<u32>()?;
+fn day_4(puzzle_number: u32) -> Result<u32> {
   let is_valid = match puzzle_number {
     7 => is_valid_7,
     8 => is_valid_8,
@@ -28,10 +27,13 @@ fn day_4(min: u32, max: u32) -> Result<u32> {
       ))
     }
   };
-  let count = (min..=max).filter(is_valid).count() as u32;
+  let count = (MIN..=MAX).filter(is_valid).count() as u32;
   Ok(count)
 }
 
 fn main() {
-  print(day_4(MIN, MAX));
+  print((|| {
+    let puzzle_number = get_first_arg()?.parse::<u32>()?;
+    day_4(puzzle_number)
+  })());
 }
