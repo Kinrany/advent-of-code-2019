@@ -8,6 +8,5 @@ use shared::intcode::Program;
 /// > and replace position 2 with the value 2.
 pub fn restore_program(program: &mut Program) {
   // assume that the program has at least three symbols
-  program[1] = 12;
-  program[2] = 2;
+  program.legacy_set_input(12, 2);
 }

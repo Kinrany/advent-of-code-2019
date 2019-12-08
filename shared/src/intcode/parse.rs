@@ -5,6 +5,6 @@ pub fn parse(input: &str) -> anyhow::Result<Program> {
     .trim()
     .split(',')
     .map(&str::parse::<usize>)
-    .collect::<Result<Vec<_>, _>>()
+    .collect::<Result<Program, _>>()
     .map_err(anyhow::Error::new)
 }

@@ -1,30 +1,21 @@
-use super::Program;
-use itertools::Itertools;
+use super::program::{ExecutionResult, Program};
 
 pub fn run(program: &mut Program) {
+  use ExecutionResult::*;
+
+  let mut halted = false;
   let mut ptr = 0;
-  loop {
-    match program[ptr] {
-      99 => break,
-      1 => {
-        let (&input1, &input2, &output) = program
-          .iter()
-          .skip(ptr + 1)
-          .next_tuple()
-          .expect("program to be valid");
-        program[output] = program[input1] + &program[input2];
+  while !halted {
+    let op = program.get_op_at(ptr).expect("Invalid program");
+    let result = program.execute_op(op);
+    match result {
+      Halt => {
+        halted = true;
       }
-      2 => {
-        let (&input1, &input2, &output) = program
-          .iter()
-          .skip(ptr + 1)
-          .next_tuple()
-          .expect("program to be valid");
-        program[output] = program[input1] * &program[input2];
+      Continue { ptr_offset } => {
+        ptr += ptr_offset;
       }
-      _ => panic!("Invalid program"),
-    };
-    ptr += 4;
+    }
   }
 }
 
@@ -34,56 +25,51 @@ mod tests {
 
   #[test]
   fn example_0() {
-    let input = vec![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50];
-    let expected_output = vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50];
+    let mut program = vec![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50].into();
+    let expected = vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50].into();
 
-    let mut output = input;
-    run(&mut output);
+    run(&mut program);
 
-    assert_eq!(output, expected_output);
+    assert_eq!(program, expected);
   }
 
   #[test]
   fn example_1() {
-    let input = vec![1, 0, 0, 0, 99];
-    let expected_output = vec![2, 0, 0, 0, 99];
+    let mut program = vec![1, 0, 0, 0, 99].into();
+    let expected = vec![2, 0, 0, 0, 99].into();
 
-    let mut output = input;
-    run(&mut output);
+    run(&mut program);
 
-    assert_eq!(output, expected_output);
+    assert_eq!(program, expected);
   }
 
   #[test]
   fn example_2() {
-    let input = vec![2, 3, 0, 3, 99];
-    let expected_output = vec![2, 3, 0, 6, 99];
+    let mut program = vec![2, 3, 0, 3, 99].into();
+    let expected = vec![2, 3, 0, 6, 99].into();
 
-    let mut output = input;
-    run(&mut output);
+    run(&mut program);
 
-    assert_eq!(output, expected_output);
+    assert_eq!(program, expected);
   }
 
   #[test]
   fn example_3() {
-    let input = vec![2, 4, 4, 5, 99, 0];
-    let expected_output = vec![2, 4, 4, 5, 99, 9801];
+    let mut program = vec![2, 4, 4, 5, 99, 0].into();
+    let expected = vec![2, 4, 4, 5, 99, 9801].into();
 
-    let mut output = input;
-    run(&mut output);
+    run(&mut program);
 
-    assert_eq!(output, expected_output);
+    assert_eq!(program, expected);
   }
 
   #[test]
   fn example_4() {
-    let input = vec![1, 1, 1, 4, 99, 5, 6, 0, 99];
-    let expected_output = vec![30, 1, 1, 4, 2, 5, 6, 0, 99];
+    let mut program = vec![1, 1, 1, 4, 99, 5, 6, 0, 99].into();
+    let expected = vec![30, 1, 1, 4, 2, 5, 6, 0, 99].into();
 
-    let mut output = input;
-    run(&mut output);
+    run(&mut program);
 
-    assert_eq!(output, expected_output);
+    assert_eq!(program, expected);
   }
 }

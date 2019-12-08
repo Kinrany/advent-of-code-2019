@@ -7,5 +7,5 @@ use shared::intcode;
 pub fn puzzle_3(mut program: intcode::Program) -> Result<usize> {
   restore_program(&mut program);
   intcode::run(&mut program);
-  Ok(program[0])
+  Ok(program.legacy_get_output())
 }

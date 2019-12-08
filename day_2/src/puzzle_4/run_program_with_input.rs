@@ -1,9 +1,8 @@
 use shared::intcode::{run, Program};
 
-pub fn run_program_with_input(program: &Program, input1: usize, input2: usize) -> usize {
+pub fn run_program_with_input(program: &Program, in1: usize, in2: usize) -> usize {
   let mut program = program.clone();
-  program[1] = input1;
-  program[2] = input2;
+  program.legacy_set_input(in1, in2);
   run(&mut program);
-  program[0]
+  program.legacy_get_output()
 }
