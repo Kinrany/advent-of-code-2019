@@ -1,16 +1,18 @@
 use super::program::{ExecutionResult, Program};
 
-pub fn run(program: &mut Program) {
+pub fn run_with_input<T>(program: &mut Program, input: &mut T) -> Vec<isize>
+where
+  T: Iterator<Item = isize>,
+{
   use ExecutionResult::*;
 
-  let mut input = Vec::<usize>::new().into_iter();
   let mut output = Vec::new();
 
   let mut halted = false;
   let mut ptr = 0;
   while !halted {
     let op = program.get_op_at(ptr).expect("Invalid program");
-    let result = program.execute_op(op, &mut input);
+    let result = program.execute_op(op, input);
     match result {
       Halt => {
         halted = true;
@@ -24,11 +26,18 @@ pub fn run(program: &mut Program) {
       }
     }
   }
+
+  output
+}
+
+pub fn run(program: &mut Program) -> Vec<isize> {
+  let mut input = Vec::new().into_iter();
+  run_with_input(program, &mut input)
 }
 
 #[cfg(test)]
 mod tests {
-  use super::run;
+  use super::*;
 
   #[test]
   fn example_0() {
@@ -78,5 +87,39 @@ mod tests {
     run(&mut program);
 
     assert_eq!(program, expected);
+  }
+
+  #[test]
+  fn io_example_1() {
+    let input = vec![42];
+    let expected_output = vec![42];
+
+    let mut program = vec![3, 0, 4, 0, 99].into();
+    let expected_program = vec![42, 0, 4, 0, 99].into();
+
+    let output = run_with_input(&mut program, &mut input.into_iter());
+
+    assert_eq!(program, expected_program);
+    assert_eq!(output, expected_output);
+  }
+
+  #[test]
+  fn example_5() {
+    let mut program = vec![1002, 4, 3, 4, 33].into();
+    let expected_program = vec![1002, 4, 3, 4, 99].into();
+
+    run(&mut program);
+
+    assert_eq!(program, expected_program);
+  }
+
+  #[test]
+  fn example_6() {
+    let mut program = vec![1101, 100, -1, 4, 0].into();
+    let expected_program = vec![1101, 100, -1, 4, 99].into();
+
+    run(&mut program);
+
+    assert_eq!(program, expected_program);
   }
 }

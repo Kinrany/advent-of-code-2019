@@ -1,18 +1,18 @@
-use std::iter::FromIterator;
+use std::{convert::TryFrom, iter::FromIterator};
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Program(Vec<usize>);
+pub struct Program(Vec<isize>);
 
 #[derive(Clone, Debug)]
 pub enum Parameter {
   Position(usize),
-  Immediate(usize),
+  Immediate(isize),
 }
 
-impl From<(usize, usize)> for Parameter {
-  fn from((value, mode): (usize, usize)) -> Self {
+impl From<(isize, isize)> for Parameter {
+  fn from((value, mode): (isize, isize)) -> Self {
     match mode {
-      0 => Parameter::Position(value),
+      0 => Parameter::Position(usize::try_from(value).expect("Pointers must be non-negative")),
       1 => Parameter::Immediate(value),
       x => panic!("Mode must be 0 or 1, found {:?}", x),
     }
@@ -41,33 +41,33 @@ pub enum Instruction {
 }
 
 #[derive(Debug)]
-pub struct InvalidInstruction(usize);
+pub struct InvalidInstruction(isize);
 
 #[derive(Debug)]
 pub enum ExecutionResult {
   Halt,
   Continue { ptr_offset: usize },
-  Output { ptr_offset: usize, value: usize },
+  Output { ptr_offset: usize, value: isize },
 }
 
 impl Program {
-  pub fn legacy_set_input(&mut self, in1: usize, in2: usize) {
+  pub fn legacy_set_input(&mut self, in1: isize, in2: isize) {
     self.0[1] = in1;
     self.0[2] = in2;
   }
 
-  pub fn legacy_get_output(&self) -> usize {
+  pub fn legacy_get_output(&self) -> isize {
     self.0[0]
   }
 
-  pub fn get_value(&self, ptr: Parameter) -> usize {
+  pub fn get_value(&self, ptr: Parameter) -> isize {
     match ptr {
       Parameter::Position(x) => self.0[x],
       Parameter::Immediate(x) => x,
     }
   }
 
-  pub fn set_value(&mut self, ptr: Parameter, value: usize) {
+  pub fn set_value(&mut self, ptr: Parameter, value: isize) {
     let address = match ptr {
       Parameter::Position(x) => x,
       Parameter::Immediate(_) => panic!("Unexpected immediate mode parameter"),
@@ -108,7 +108,7 @@ impl Program {
 
   pub fn execute_op<T>(&mut self, op: Instruction, input: &mut T) -> ExecutionResult
   where
-    T: Iterator<Item = usize>,
+    T: Iterator<Item = isize>,
   {
     use Instruction::*;
 
@@ -134,23 +134,23 @@ impl Program {
   }
 }
 
-impl FromIterator<usize> for Program {
+impl FromIterator<isize> for Program {
   fn from_iter<T>(it: T) -> Self
   where
-    T: IntoIterator<Item = usize>,
+    T: IntoIterator<Item = isize>,
   {
     Program(it.into_iter().collect())
   }
 }
 
-impl From<Vec<usize>> for Program {
-  fn from(vec: Vec<usize>) -> Self {
+impl From<Vec<isize>> for Program {
+  fn from(vec: Vec<isize>) -> Self {
     Program(vec)
   }
 }
 
-impl Into<Vec<usize>> for Program {
-  fn into(self) -> Vec<usize> {
+impl Into<Vec<isize>> for Program {
+  fn into(self) -> Vec<isize> {
     self.0
   }
 }

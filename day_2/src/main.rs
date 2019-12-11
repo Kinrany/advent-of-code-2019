@@ -6,7 +6,7 @@ use puzzle_3::puzzle_3;
 use puzzle_4::puzzle_4;
 use shared::{input, intcode, print};
 
-fn day_2(puzzle_number: usize, input: intcode::Program) -> Result<usize> {
+fn day_2(puzzle_number: usize, input: intcode::Program) -> Result<isize> {
   match puzzle_number {
     3 => puzzle_3(input),
     4 => puzzle_4(input),
