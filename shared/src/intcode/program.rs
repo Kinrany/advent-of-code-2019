@@ -3,20 +3,51 @@ use std::iter::FromIterator;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Program(Vec<usize>);
 
-#[derive(Debug)]
-pub enum Operation {
-  Halt,
-  Add { in1: usize, in2: usize, out: usize },
-  Mul { in1: usize, in2: usize, out: usize },
+#[derive(Clone, Debug)]
+pub enum Parameter {
+  Position(usize),
+  Immediate(usize),
+}
+
+impl From<(usize, usize)> for Parameter {
+  fn from((value, mode): (usize, usize)) -> Self {
+    match mode {
+      0 => Parameter::Position(value),
+      1 => Parameter::Immediate(value),
+      x => panic!("Mode must be 0 or 1, found {:?}", x),
+    }
+  }
 }
 
 #[derive(Debug)]
-pub struct InvalidOperation(usize);
+pub enum Instruction {
+  Halt,
+  Add {
+    in1: Parameter,
+    in2: Parameter,
+    out: Parameter,
+  },
+  Mul {
+    in1: Parameter,
+    in2: Parameter,
+    out: Parameter,
+  },
+  Input {
+    address: Parameter,
+  },
+  Output {
+    address: Parameter,
+  },
+}
+
+#[derive(Debug)]
+pub struct InvalidInstruction(usize);
 
 #[derive(Debug)]
 pub enum ExecutionResult {
   Halt,
   Continue { ptr_offset: usize },
+  Output { ptr_offset: usize, value: usize },
 }
 
 impl Program {
@@ -29,41 +60,76 @@ impl Program {
     self.0[0]
   }
 
-  pub fn get_op_at(&self, ptr: usize) -> Result<Operation, InvalidOperation> {
-    use Operation::*;
-
-    let program = &self.0;
-
-    match program[ptr] {
-      99 => Ok(Halt),
-      1 => Ok(Add {
-        in1: program[ptr + 1],
-        in2: program[ptr + 2],
-        out: program[ptr + 3],
-      }),
-      2 => Ok(Mul {
-        in1: program[ptr + 1],
-        in2: program[ptr + 2],
-        out: program[ptr + 3],
-      }),
-      opcode => Err(InvalidOperation(opcode)),
+  pub fn get_value(&self, ptr: Parameter) -> usize {
+    match ptr {
+      Parameter::Position(x) => self.0[x],
+      Parameter::Immediate(x) => x,
     }
   }
 
-  pub fn execute_op(&mut self, op: Operation) -> ExecutionResult {
-    use Operation::*;
+  pub fn set_value(&mut self, ptr: Parameter, value: usize) {
+    let address = match ptr {
+      Parameter::Position(x) => x,
+      Parameter::Immediate(_) => panic!("Unexpected immediate mode parameter"),
+    };
+    self.0[address] = value;
+  }
 
-    let program = &mut self.0;
+  pub fn get_op_at(&self, ptr: usize) -> Result<Instruction, InvalidInstruction> {
+    use Instruction::*;
+
+    let program = &self.0;
+
+    let instruction = program[ptr];
+    let opcode = instruction % 100;
+    let mode = instruction / 100;
+
+    match opcode {
+      99 => Ok(Halt),
+      1 => Ok(Add {
+        in1: (program[ptr + 1], mode % 10).into(),
+        in2: (program[ptr + 2], mode / 10 % 10).into(),
+        out: (program[ptr + 3], mode / 100 % 10).into(),
+      }),
+      2 => Ok(Mul {
+        in1: (program[ptr + 1], mode % 10).into(),
+        in2: (program[ptr + 2], mode / 10 % 10).into(),
+        out: (program[ptr + 3], mode / 100 % 10).into(),
+      }),
+      3 => Ok(Input {
+        address: (program[ptr + 1], mode % 10).into(),
+      }),
+      4 => Ok(Output {
+        address: (program[ptr + 1], mode % 10).into(),
+      }),
+      _ => Err(InvalidInstruction(instruction)),
+    }
+  }
+
+  pub fn execute_op<T>(&mut self, op: Instruction, input: &mut T) -> ExecutionResult
+  where
+    T: Iterator<Item = usize>,
+  {
+    use Instruction::*;
+
     match op {
       Halt => ExecutionResult::Halt,
       Add { in1, in2, out } => {
-        program[out] = program[in1] + &program[in2];
+        self.set_value(out, self.get_value(in1) + self.get_value(in2));
         ExecutionResult::Continue { ptr_offset: 4 }
       }
       Mul { in1, in2, out } => {
-        program[out] = program[in1] * &program[in2];
+        self.set_value(out, self.get_value(in1) * self.get_value(in2));
         ExecutionResult::Continue { ptr_offset: 4 }
       }
+      Input { address } => {
+        self.set_value(address, input.next().unwrap());
+        ExecutionResult::Continue { ptr_offset: 2 }
+      }
+      Output { address } => ExecutionResult::Output {
+        ptr_offset: 2,
+        value: self.get_value(address),
+      },
     }
   }
 }

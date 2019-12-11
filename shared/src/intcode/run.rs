@@ -3,17 +3,24 @@ use super::program::{ExecutionResult, Program};
 pub fn run(program: &mut Program) {
   use ExecutionResult::*;
 
+  let mut input = Vec::<usize>::new().into_iter();
+  let mut output = Vec::new();
+
   let mut halted = false;
   let mut ptr = 0;
   while !halted {
     let op = program.get_op_at(ptr).expect("Invalid program");
-    let result = program.execute_op(op);
+    let result = program.execute_op(op, &mut input);
     match result {
       Halt => {
         halted = true;
       }
       Continue { ptr_offset } => {
         ptr += ptr_offset;
+      }
+      Output { ptr_offset, value } => {
+        ptr += ptr_offset;
+        output.push(value);
       }
     }
   }
