@@ -15,7 +15,8 @@ impl<T1> OptionOrOk<T1> for Option<T1> {
 }
 
 pub fn puzzle_9(mut program: intcode::Program) -> Result<isize> {
-  let output = intcode::run_with_input(&mut program, &mut vec![1].into_iter());
+  let input = vec![1];
+  let output = intcode::run_with_input(&mut program, &mut input.into_iter());
   let (&diagnostic_code, error_outputs) = output.split_last().ok_or(anyhow!("Empty output"))?;
 
   error_outputs
